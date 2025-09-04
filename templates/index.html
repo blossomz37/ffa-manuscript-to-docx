@@ -141,11 +141,12 @@
         {% endwith %}
 
         <form method="POST" action="/convert" enctype="multipart/form-data" id="uploadForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="upload-area" id="uploadArea">
                 <div>
                     <h3>📁 Choose Your Markdown Files</h3>
                     <p>Select single file, multiple files, or drag and drop here</p>
-                    <input type="file" name="files" accept=".md,.txt,.markdown" multiple id="fileInput" webkitdirectory directory>
+                    <input type="file" name="files" accept=".md,.txt,.markdown" multiple id="fileInput">
                     <div class="file-info" id="fileInfo"></div>
                     <div class="upload-options">
                         <label>
@@ -163,7 +164,7 @@
         <div class="features">
             <h3>✨ Features</h3>
             <ul>
-                <li><strong>Multiple File Support:</strong> Upload single files, multiple files, or entire folders</li>
+                <li><strong>Multiple File Support:</strong> Upload single or multiple markdown files</li>
                 <li><strong>Multiple Chapter Formats:</strong> Supports <code># Chapter N: Title</code>, <code>## Chapter N. Title</code>, and <code># Chapter N</code></li>
                 <li><strong>Duplicate Header Handling:</strong> Automatically removes duplicate consecutive chapter headers</li>
                 <li><strong>ProWriting Aid Compatible:</strong> Uses only Heading 2 and Normal styles for perfect compatibility</li>

@@ -52,7 +52,7 @@ pip install flask python-docx
 python app.py
 ```
 
-3. Open your browser and go to `http://localhost:5000`
+3. Open your browser and go to `http://localhost:8080`
 
 ## Usage
 
@@ -62,8 +62,14 @@ python app.py
 
 ## Deployment Options
 
+### Render.com (Recommended for Students)
+1. Push your code to GitHub
+2. Connect your GitHub repo to Render
+3. Set environment variable: `SECRET_KEY` (generate with `python -c "import secrets; print(secrets.token_hex(32))"`)
+4. Deploy!
+
 ### Local Development
-- Run `python app.py` for local testing
+- Run `python app.py` for local testing (runs on port 8080)
 
 ### Cloud Deployment Options
 - **Heroku**: Simple git-based deployment
