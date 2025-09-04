@@ -19,9 +19,10 @@ The converter should handle this format as well.
 # Chapter 4
 Chapter 4
 
-This chapter has a title on the same line as the chapter number.
+This chapter has a duplicate title on the next line.
 
 ## Chapter 5
 Chapter 5: The Final Test
 
-This chapter has a chapter title after the colon.
+This chapter has a chapter after two hashtags.
+On the second line, this chapter has a chapter title after the colon.

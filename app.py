@@ -57,8 +57,8 @@ def parse_markdown_content(markdown_text):
             chapter_title = match1.group(2).strip()
             chapter_match = True
         else:
-            # Format 2: # Chapter N or # CHAPTER N (just number, no title)
-            match2 = re.match(r'^# (?:CHAPTER|Chapter) (\d+)$', line.strip())
+            # Format 2: # Chapter N or ## Chapter N (just number, no title) 
+            match2 = re.match(r'^##? (?:CHAPTER|Chapter) (\d+)$', line.strip())
             if match2:
                 chapter_number = int(match2.group(1))
                 chapter_title = None  # No title, will be handled in display

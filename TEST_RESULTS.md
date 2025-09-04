@@ -3,17 +3,46 @@
 ## 🧪 Conversion Test Results
 
 **Date**: September 3, 2025  
-**Status**: ✅ **SUCCESSFUL**
+**Status**: ✅ **SUCCESSFUL** (Updated with Chapter 5 fix)
 
 ### Files Tested
 - ✅ `sample-story.md` → 4 chapters converted (Chapter N: Title format)
 - ✅ `academy-story.md` → 4 chapters converted (Chapter N. Title format)  
 - ✅ `simple-chapters.md` → 5 chapters converted (Chapter N format)
 - ✅ `duplicate-headers.md` → 3 chapters converted (duplicate handling working)
-- ✅ `test_sample.md` → 4 chapters converted
+- ✅ `test_sample.md` → **5 chapters converted** (Previously 4 - Chapter 5 fix applied!)
 - ⚠️ `README.md` → Expected failure (no chapters)
 
 **Success Rate**: 5/5 valid test files (100%)
+
+## 🔧 Bug Fix Applied
+
+### Issue Discovered:
+Chapter 5 in `test_sample.md` was not being detected:
+```markdown
+## Chapter 5
+Chapter 5: The Final Test
+```
+
+### Root Cause:
+The regex pattern only matched chapters with explicit colons/periods:
+- ✅ `# Chapter N: Title` 
+- ✅ `## Chapter N. Title`
+- ❌ `## Chapter N` (no colon/period)
+
+### Solution:
+Updated the parser regex from:
+```python
+# OLD: Only matched H1 without colon/period
+match2 = re.match(r'^# (?:CHAPTER|Chapter) (\d+)$', line.strip())
+```
+```python  
+# NEW: Matches both H1 and H2 without colon/period
+match2 = re.match(r'^##? (?:CHAPTER|Chapter) (\d+)$', line.strip())
+```
+
+### Result:
+✅ Chapter 5 now properly detected and converted!
 
 ## 🔍 DOCX Analysis Results
 
