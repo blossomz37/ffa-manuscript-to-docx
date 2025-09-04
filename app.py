@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 """
 Flask web application for Markdown to DOCX conversion
+
+EDUCATIONAL PURPOSE ONLY:
+This application is designed for educational purposes to demonstrate
+basic web development and file conversion techniques. It is intended
+for learning about Flask, file processing, and document conversion.
+
+Use responsibly and in accordance with your educational institution's policies.
 """
 
 import os

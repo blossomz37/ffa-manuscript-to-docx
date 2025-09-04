@@ -5,6 +5,8 @@
 
 A simple web application that converts Markdown files to DOCX format, specifically designed for ProWriting Aid compatibility.
 
+> **Educational Purpose**: This tool is designed for educational purposes to demonstrate basic scripting and file conversion techniques. It is intended for learning about web development, file processing, and document conversion workflows.
+
 ## Features
 
 - Upload Markdown files through a web interface
@@ -68,4 +70,23 @@ python app.py
 - **PythonAnywhere**: Python-specific hosting
 - **DigitalOcean App Platform**: Scalable cloud hosting
 
+## Educational Purpose & Disclaimer
+
+This project is created for **educational purposes only** to demonstrate:
+- Basic web development with Flask
+- File upload and processing workflows
+- Document format conversion techniques
+- Simple deployment strategies
+
+**Learning Objectives:**
+- Understanding web forms and file handling
+- Working with Python libraries (Flask, python-docx)
+- Basic HTML templating
+- Git version control and GitHub workflows
+
+This tool is intended as a learning resource for students and developers exploring web development and file processing concepts. Use responsibly and in accordance with your educational institution's policies.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 See the deployment section in the documentation for detailed instructions.
