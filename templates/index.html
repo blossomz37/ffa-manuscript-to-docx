@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown to DOCX Converter</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .description {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #007bff;
+        }
+        .upload-area.dragover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        input[type="file"] {
+            margin: 20px 0;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .features {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .features h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .features ul {
+            color: #666;
+            line-height: 1.6;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .file-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Markdown to DOCX Converter</h1>
+        
+        <div class="description">
+            <p>Convert your Markdown files to ProWriting Aid compatible DOCX format. This tool handles multiple chapter formats and ensures clean, professional output.</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/convert" enctype="multipart/form-data" id="uploadForm">
+            <div class="upload-area" id="uploadArea">
+                <div>
+                    <h3>📁 Choose or Drop Your Markdown File</h3>
+                    <p>Drag and drop your .md file here, or click to browse</p>
+                    <input type="file" name="file" accept=".md,.txt,.markdown" required id="fileInput">
+                    <div class="file-info" id="fileInfo"></div>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <button type="submit" id="convertBtn">🔄 Convert to DOCX</button>
+            </div>
+        </form>
+
+        <div class="features">
+            <h3>✨ Features</h3>
+            <ul>
+                <li><strong>Multiple Chapter Formats:</strong> Supports <code># Chapter N: Title</code>, <code>## Chapter N. Title</code>, and <code># Chapter N</code></li>
+                <li><strong>Duplicate Header Handling:</strong> Automatically removes duplicate consecutive chapter headers</li>
+                <li><strong>ProWriting Aid Compatible:</strong> Uses only Heading 1 and Normal styles for perfect compatibility</li>
+                <li><strong>Clean Output:</strong> Proper spacing and formatting for professional documents</li>
+                <li><strong>File Size Limit:</strong> Supports files up to 16MB</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const convertBtn = document.getElementById('convertBtn');
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateFileInfo(files[0]);
+            }
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                updateFileInfo(e.target.files[0]);
+            }
+        });
+
+        function updateFileInfo(file) {
+            const size = (file.size / 1024).toFixed(2);
+            fileInfo.innerHTML = `Selected: <strong>${file.name}</strong> (${size} KB)`;
+        }
+
+        // Form submission
+        document.getElementById('uploadForm').addEventListener('submit', () => {
+            convertBtn.disabled = true;
+            convertBtn.innerHTML = '⏳ Converting...';
+        });
+    </script>
+</body>
+</html>
