@@ -1,5 +1,8 @@
 # Markdown to DOCX Web Converter
 
+![CI](https://github.com/blossomz37/ffa-manuscript-to-docx/workflows/CI/CD/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A simple web application that converts Markdown files to DOCX format, specifically designed for ProWriting Aid compatibility.
 
 ## Features
@@ -12,6 +15,26 @@ A simple web application that converts Markdown files to DOCX format, specifical
   - `# Chapter N` (number only)
 - Handles duplicate chapter headers automatically
 - ProWriting Aid compatible output (Heading 1 + Normal styles)
+
+## Quick Start
+
+1. Clone the repository:
+```bash
+git clone https://github.com/blossomz37/ffa-manuscript-to-docx.git
+cd ffa-manuscript-to-docx
+```
+
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+3. Run the application:
+```bash
+python app.py
+```
+
+4. Open your browser to `http://localhost:8080`
 
 ## Installation
 
