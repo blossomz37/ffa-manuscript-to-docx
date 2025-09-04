@@ -61,3 +61,7 @@ uploads/
 
 # Output files
 output/
+test-output/
+
+# Test output files
+*.docx
