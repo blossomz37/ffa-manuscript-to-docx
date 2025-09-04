@@ -39,6 +39,8 @@ jobs:
     steps:
     - name: Deploy to Render
       # Only runs if you set up RENDER_DEPLOY_HOOK secret
-      if: ${{ secrets.RENDER_DEPLOY_HOOK }}
+      env:
+        DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+      if: env.DEPLOY_HOOK != ''
       run: |
-        curl "${{ secrets.RENDER_DEPLOY_HOOK }}"
+        curl "$DEPLOY_HOOK"
