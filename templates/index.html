@@ -145,7 +145,7 @@
             <div class="upload-area" id="uploadArea">
                 <div>
                     <h3>📁 Choose Your Markdown Files</h3>
-                    <p>Select single file, multiple files, or drag and drop here</p>
+                    <p>Click to select files, or drag and drop files/folders here</p>
                     <input type="file" name="files" accept=".md,.txt,.markdown" multiple id="fileInput">
                     <div class="file-info" id="fileInfo"></div>
                     <div class="upload-options">
@@ -245,15 +245,65 @@
             uploadArea.classList.remove('dragover');
         });
 
-        uploadArea.addEventListener('drop', (e) => {
+        uploadArea.addEventListener('drop', async (e) => {
             e.preventDefault();
             uploadArea.classList.remove('dragover');
             
-            const files = e.dataTransfer.files;
-            // Set files to input (this is tricky with multiple files)
-            fileInput.files = files;
-            displaySelectedFiles();
+            // Show loading indicator
+            fileInfo.innerHTML = '<div style="color: #007bff;">⏳ Processing dropped files...</div>';
+            
+            const items = e.dataTransfer.items;
+            const files = [];
+            
+            // Check if we have items (for folder support)
+            if (items && items.length > 0 && items[0].webkitGetAsEntry) {
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i].webkitGetAsEntry();
+                    if (item) {
+                        await traverseFileTree(item, files);
+                    }
+                }
+            } else {
+                // Fallback to regular files
+                for (let i = 0; i < e.dataTransfer.files.length; i++) {
+                    files.push(e.dataTransfer.files[i]);
+                }
+            }
+            
+            // Convert to FileList-like structure and set to input
+            if (files.length > 0) {
+                const dt = new DataTransfer();
+                files.forEach(file => {
+                    if (file instanceof File) {
+                        dt.items.add(file);
+                    }
+                });
+                fileInput.files = dt.files;
+                displaySelectedFiles();
+            } else {
+                fileInfo.innerHTML = '<div style="color: #d9534f;">No files found. Please drop markdown files or folders containing them.</div>';
+            }
         });
+        
+        // Helper function to traverse directory tree
+        async function traverseFileTree(item, files) {
+            return new Promise((resolve) => {
+                if (item.isFile) {
+                    item.file(file => {
+                        files.push(file);
+                        resolve();
+                    });
+                } else if (item.isDirectory) {
+                    const dirReader = item.createReader();
+                    dirReader.readEntries(async (entries) => {
+                        for (let entry of entries) {
+                            await traverseFileTree(entry, files);
+                        }
+                        resolve();
+                    });
+                }
+            });
+        }
 
         fileInput.addEventListener('change', displaySelectedFiles);
 
