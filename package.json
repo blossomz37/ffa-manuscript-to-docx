@@ -1,0 +1,25 @@
+{
+  "name": "markdown-to-docx-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for converting Markdown to DOCX with ProWriting Aid compatibility",
+  "main": "mcp_server.py",
+  "scripts": {
+    "start": "python mcp_server.py"
+  },
+  "keywords": [
+    "mcp",
+    "markdown",
+    "docx",
+    "converter",
+    "prowritingaid"
+  ],
+  "author": "",
+  "license": "MIT",
+  "mcp": {
+    "server": {
+      "command": "python",
+      "args": ["mcp_server.py"],
+      "env": {}
+    }
+  }
+}

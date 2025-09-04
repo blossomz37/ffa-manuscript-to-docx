@@ -11,14 +11,16 @@ A simple web application that converts Markdown files to DOCX format, specifical
 
 ## Features
 
-- Upload Markdown files through a web interface
-- Convert to DOCX with proper chapter structure
-- Supports multiple chapter formats:
+- 🌐 **Web Interface**: Upload and convert files through a user-friendly web interface
+- 📄 **DOCX Conversion**: Convert to DOCX with proper chapter structure
+- 📚 **Multiple Chapter Formats**:
   - `# Chapter N: Title`
   - `## Chapter N. Title` 
   - `# Chapter N` (number only)
-- Handles duplicate chapter headers automatically
-- ProWriting Aid compatible output (Heading 1 + Normal styles)
+- 🔄 **Duplicate Header Handling**: Automatically removes duplicate consecutive chapter headers
+- ✅ **ProWriting Aid Compatible**: Uses Heading 2 + Normal styles for perfect compatibility
+- 🤖 **MCP Server**: Use with AI assistants like Claude through Model Context Protocol
+- 🔒 **Security**: CSRF protection, file validation, and secure temp file handling
 
 ## Quick Start
 
@@ -56,9 +58,28 @@ python app.py
 
 ## Usage
 
+### Web Interface
 1. Upload your Markdown file using the web interface
 2. Click "Convert to DOCX"
 3. Download the converted DOCX file
+
+### MCP Server (AI Assistant Integration)
+Use with Claude Desktop or other AI assistants:
+
+```bash
+# Install MCP dependencies
+pip install -r requirements-mcp.txt
+
+# Test the server
+python test_mcp.py
+```
+
+Configure in Claude Desktop and ask:
+- "Convert this markdown to DOCX format: [your content]"
+- "Parse the chapters in this markdown file"
+- "Validate this markdown for conversion"
+
+See [MCP_SETUP.md](MCP_SETUP.md) for detailed setup instructions.
 
 ## Deployment Options
 

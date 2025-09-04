@@ -1,0 +1,12 @@
+# MCP Server Requirements
+# Install with: pip install -r requirements-mcp.txt
+
+# Core requirements (from main app)
+Flask==2.3.3
+Flask-WTF==1.1.1
+python-docx==0.8.11
+Werkzeug==2.3.7
+
+# MCP specific requirements
+mcp>=0.1.0
+asyncio
