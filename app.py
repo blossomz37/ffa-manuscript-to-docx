@@ -29,6 +29,7 @@ from flask import Flask, request, render_template, send_file, flash, redirect, u
 from werkzeug.utils import secure_filename
 import tempfile
 import uuid
+import zipfile
 
 try:
     from docx import Document
@@ -159,45 +160,74 @@ def index():
 
 @app.route('/convert', methods=['POST'])
 def convert_file():
-    if 'file' not in request.files:
-        flash('No file selected')
+    if 'files' not in request.files:
+        flash('No files selected')
         return redirect(request.url)
     
-    file = request.files['file']
+    files = request.files.getlist('files')
+    zip_output = request.form.get('zip_output') == 'on'
     
-    if file.filename == '':
-        flash('No file selected')
+    if not files or all(f.filename == '' for f in files):
+        flash('No files selected')
         return redirect(request.url)
     
-    if file and allowed_file(file.filename):
-        try:
+    # Filter valid files
+    valid_files = [f for f in files if f and allowed_file(f.filename)]
+    
+    if not valid_files:
+        flash('No valid markdown files selected. Please upload .md, .txt, or .markdown files.')
+        return redirect(request.url)
+    
+    try:
+        converted_files = []
+        unique_id = str(uuid.uuid4())[:8]
+        
+        # Process each file
+        for file in valid_files:
             # Read markdown content
             markdown_content = file.read().decode('utf-8')
             
-            # Create unique filename for output
-            unique_id = str(uuid.uuid4())[:8]
+            # Create output filename
             original_name = secure_filename(file.filename)
             base_name = original_name.rsplit('.', 1)[0]
-            output_filename = f"{base_name}_converted_{unique_id}.docx"
-            output_path = os.path.join(UPLOAD_FOLDER, output_filename)
+            output_filename = f"{base_name}_converted.docx"
+            output_path = os.path.join(UPLOAD_FOLDER, f"{unique_id}_{output_filename}")
             
             # Convert to DOCX
             success, message = create_prowriting_aid_docx(markdown_content, output_path)
             
             if success:
-                return send_file(output_path, 
-                               as_attachment=True, 
-                               download_name=output_filename,
-                               mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+                converted_files.append((output_path, output_filename))
             else:
-                flash(f'Conversion failed: {message}')
-                return redirect(url_for('index'))
-                
-        except Exception as e:
-            flash(f'Error processing file: {str(e)}')
+                flash(f'Conversion failed for {original_name}: {message}')
+        
+        if not converted_files:
+            flash('No files were successfully converted')
             return redirect(url_for('index'))
-    else:
-        flash('Invalid file type. Please upload a .md, .txt, or .markdown file.')
+        
+        # Single file - return directly
+        if len(converted_files) == 1 and not zip_output:
+            output_path, filename = converted_files[0]
+            return send_file(output_path, 
+                           as_attachment=True, 
+                           download_name=filename,
+                           mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        
+        # Multiple files or zip requested - create zip file
+        zip_filename = f"converted_manuscripts_{unique_id}.zip"
+        zip_path = os.path.join(UPLOAD_FOLDER, zip_filename)
+        
+        with zipfile.ZipFile(zip_path, 'w') as zipf:
+            for file_path, filename in converted_files:
+                zipf.write(file_path, filename)
+        
+        return send_file(zip_path, 
+                       as_attachment=True, 
+                       download_name=zip_filename,
+                       mimetype='application/zip')
+                       
+    except Exception as e:
+        flash(f'Error processing files: {str(e)}')
         return redirect(url_for('index'))
 
 if __name__ == '__main__':

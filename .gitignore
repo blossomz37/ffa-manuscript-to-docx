@@ -65,3 +65,6 @@ test-output/
 
 # Test output files
 *.docx
+
+# Samples
+test-files/sample_manuscript.md

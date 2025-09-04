@@ -96,6 +96,32 @@
             font-size: 14px;
             color: #666;
         }
+        .upload-options {
+            margin-top: 15px;
+            text-align: left;
+            font-size: 14px;
+        }
+        .upload-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .selected-files {
+            margin-top: 10px;
+            text-align: left;
+            font-size: 12px;
+            color: #555;
+        }
+        .file-list {
+            list-style: none;
+            padding: 0;
+            margin: 5px 0;
+        }
+        .file-list li {
+            padding: 2px 0;
+            border-bottom: 1px solid #eee;
+        }
     </style>
 </head>
 <body>
@@ -117,10 +143,16 @@
         <form method="POST" action="/convert" enctype="multipart/form-data" id="uploadForm">
             <div class="upload-area" id="uploadArea">
                 <div>
-                    <h3>📁 Choose or Drop Your Markdown File</h3>
-                    <p>Drag and drop your .md file here, or click to browse</p>
-                    <input type="file" name="file" accept=".md,.txt,.markdown" required id="fileInput">
+                    <h3>📁 Choose Your Markdown Files</h3>
+                    <p>Select single file, multiple files, or drag and drop here</p>
+                    <input type="file" name="files" accept=".md,.txt,.markdown" multiple id="fileInput" webkitdirectory directory>
                     <div class="file-info" id="fileInfo"></div>
+                    <div class="upload-options">
+                        <label>
+                            <input type="checkbox" id="zipOutput" name="zip_output" checked>
+                            Download as ZIP file (for multiple files)
+                        </label>
+                    </div>
                 </div>
             </div>
             <div style="text-align: center;">
@@ -131,11 +163,13 @@
         <div class="features">
             <h3>✨ Features</h3>
             <ul>
+                <li><strong>Multiple File Support:</strong> Upload single files, multiple files, or entire folders</li>
                 <li><strong>Multiple Chapter Formats:</strong> Supports <code># Chapter N: Title</code>, <code>## Chapter N. Title</code>, and <code># Chapter N</code></li>
                 <li><strong>Duplicate Header Handling:</strong> Automatically removes duplicate consecutive chapter headers</li>
-                <li><strong>ProWriting Aid Compatible:</strong> Uses only Heading 1 and Normal styles for perfect compatibility</li>
+                <li><strong>ProWriting Aid Compatible:</strong> Uses only Heading 2 and Normal styles for perfect compatibility</li>
                 <li><strong>Clean Output:</strong> Proper spacing and formatting for professional documents</li>
-                <li><strong>File Size Limit:</strong> Supports files up to 16MB</li>
+                <li><strong>ZIP Download:</strong> Multiple files automatically packaged for easy download</li>
+                <li><strong>File Size Limit:</strong> Supports files up to 16MB each</li>
             </ul>
         </div>
     </div>
@@ -145,6 +179,28 @@
         const fileInput = document.getElementById('fileInput');
         const fileInfo = document.getElementById('fileInfo');
         const convertBtn = document.getElementById('convertBtn');
+
+        // File selection display
+        function displaySelectedFiles() {
+            const files = fileInput.files;
+            if (files.length === 0) {
+                fileInfo.innerHTML = '';
+                return;
+            }
+
+            let fileListHTML = `<div class="selected-files">`;
+            if (files.length === 1) {
+                fileListHTML += `<strong>Selected file:</strong> ${files[0].name} (${(files[0].size / 1024).toFixed(1)} KB)`;
+            } else {
+                fileListHTML += `<strong>Selected ${files.length} files:</strong><ul class="file-list">`;
+                for (let i = 0; i < files.length; i++) {
+                    fileListHTML += `<li>📄 ${files[i].name} (${(files[i].size / 1024).toFixed(1)} KB)</li>`;
+                }
+                fileListHTML += `</ul>`;
+            }
+            fileListHTML += `</div>`;
+            fileInfo.innerHTML = fileListHTML;
+        }
 
         // Drag and drop functionality
         uploadArea.addEventListener('dragover', (e) => {
@@ -159,29 +215,19 @@
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('dragover');
+            
             const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                fileInput.files = files;
-                updateFileInfo(files[0]);
-            }
+            // Set files to input (this is tricky with multiple files)
+            fileInput.files = files;
+            displaySelectedFiles();
         });
 
-        // File input change
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                updateFileInfo(e.target.files[0]);
-            }
-        });
+        fileInput.addEventListener('change', displaySelectedFiles);
 
-        function updateFileInfo(file) {
-            const size = (file.size / 1024).toFixed(2);
-            fileInfo.innerHTML = `Selected: <strong>${file.name}</strong> (${size} KB)`;
-        }
-
-        // Form submission
-        document.getElementById('uploadForm').addEventListener('submit', () => {
+        // Form submission handling
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            convertBtn.textContent = '⏳ Converting...';
             convertBtn.disabled = true;
-            convertBtn.innerHTML = '⏳ Converting...';
         });
     </script>
 </body>
