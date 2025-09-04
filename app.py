@@ -2,8 +2,20 @@
 """
 Flask web application for Markdown to DOCX conversion
 
-EDUCATIONAL PURPOSE ONLY:
-This application is designed for educational purposes to demonstrate
+EDUCATIONAL PURPOSE O    # Get or create required styles
+    styles = doc.styles
+    
+    # Use Heading 2 for chapter titles (ProWritingAid standard)
+    try:
+        heading2_style = styles['Heading 2']
+    except KeyError:
+        heading2_style = styles.add_style('Heading 2', WD_STYLE_TYPE.PARAGRAPH)
+    
+    # Use Normal style for all content (keep it simple and compatible)
+    try:
+        normal_style = styles['Normal']
+    except KeyError:
+        normal_style = styles.add_style('Normal', WD_STYLE_TYPE.PARAGRAPH)ication is designed for educational purposes to demonstrate
 basic web development and file conversion techniques. It is intended
 for learning about Flask, file processing, and document conversion.
 
@@ -124,26 +136,15 @@ def create_prowriting_aid_docx(markdown_content, output_path):
         else:
             chapter_title = f"Chapter {chapter['number']}"
         
-        # Add chapter heading with Heading1 style
+        # Add chapter heading with Heading2 style (ProWritingAid standard)
         heading_para = doc.add_paragraph(chapter_title)
-        heading_para.style = 'Heading 1'
+        heading_para.style = 'Heading 2'
         
-        # Add CRITICAL empty paragraph with Normal style (matches document.docx)
-        empty_para = doc.add_paragraph()
-        empty_para.style = 'Normal'
-        
-        # Add content paragraphs with Normal style
+        # Add content paragraphs with Normal style (clean, no empty lines)
         for content_para in chapter['content_paragraphs']:
             if content_para.strip():  # Skip empty paragraphs
                 para = doc.add_paragraph(content_para)
                 para.style = 'Normal'
-        
-        # Add spacing between chapters (except last chapter)
-        if i < len(chapters) - 1:
-            # Add extra spacing between chapters
-            for _ in range(3):
-                spacer = doc.add_paragraph()
-                spacer.style = 'Normal'
     
     # Save document
     try:
