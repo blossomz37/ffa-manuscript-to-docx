@@ -77,6 +77,12 @@ def allowed_file(filename):
     """Check if file extension is allowed"""
     if not filename or '.' not in filename:
         return False
+    
+    # Ignore system files
+    if filename.startswith('.') or filename == 'Thumbs.db':
+        return False
+    
+    # Check extension
     return filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def validate_markdown_content(content):
@@ -215,11 +221,27 @@ def convert_file():
         flash('No files selected')
         return redirect(request.url)
     
-    # Filter valid files
-    valid_files = [f for f in files if f and allowed_file(f.filename)]
+    # Filter valid files and count ignored ones
+    valid_files = []
+    ignored_count = 0
+    system_files_ignored = []
+    
+    for f in files:
+        if f and f.filename:
+            if f.filename.startswith('.') or f.filename == 'Thumbs.db':
+                system_files_ignored.append(f.filename)
+                ignored_count += 1
+            elif allowed_file(f.filename):
+                valid_files.append(f)
+            else:
+                ignored_count += 1
+    
+    # Provide feedback about ignored files
+    if system_files_ignored:
+        flash(f'Ignored {len(system_files_ignored)} system file(s): {", ".join(system_files_ignored[:5])}{"..." if len(system_files_ignored) > 5 else ""}')
     
     if not valid_files:
-        flash('No valid markdown files selected. Please upload .md, .txt, or .markdown files.')
+        flash('No valid markdown files found. Please upload .md, .txt, or .markdown files.')
         return redirect(request.url)
     
     try:

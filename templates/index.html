@@ -189,16 +189,48 @@
                 return;
             }
 
-            let fileListHTML = `<div class="selected-files">`;
-            if (files.length === 1) {
-                fileListHTML += `<strong>Selected file:</strong> ${files[0].name} (${(files[0].size / 1024).toFixed(1)} KB)`;
-            } else {
-                fileListHTML += `<strong>Selected ${files.length} files:</strong><ul class="file-list">`;
-                for (let i = 0; i < files.length; i++) {
-                    fileListHTML += `<li>📄 ${files[i].name} (${(files[i].size / 1024).toFixed(1)} KB)</li>`;
+            // Filter and categorize files
+            const validFiles = [];
+            const ignoredFiles = [];
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const ext = file.name.split('.').pop().toLowerCase();
+                
+                // Check if it's a system file or invalid extension
+                if (file.name.startsWith('.') || file.name === 'Thumbs.db') {
+                    ignoredFiles.push(file.name);
+                } else if (ext === 'md' || ext === 'txt' || ext === 'markdown') {
+                    validFiles.push(file);
+                } else {
+                    ignoredFiles.push(file.name);
                 }
-                fileListHTML += `</ul>`;
             }
+
+            let fileListHTML = `<div class="selected-files">`;
+            
+            // Show valid files
+            if (validFiles.length > 0) {
+                if (validFiles.length === 1) {
+                    fileListHTML += `<strong>Selected file:</strong> ${validFiles[0].name} (${(validFiles[0].size / 1024).toFixed(1)} KB)`;
+                } else {
+                    fileListHTML += `<strong>Selected ${validFiles.length} valid file(s):</strong><ul class="file-list">`;
+                    for (const file of validFiles) {
+                        fileListHTML += `<li>📄 ${file.name} (${(file.size / 1024).toFixed(1)} KB)</li>`;
+                    }
+                    fileListHTML += `</ul>`;
+                }
+            }
+            
+            // Show ignored files
+            if (ignoredFiles.length > 0) {
+                fileListHTML += `<br><small style="color: #666;">Ignored ${ignoredFiles.length} file(s): ${ignoredFiles.slice(0, 5).join(', ')}${ignoredFiles.length > 5 ? '...' : ''}</small>`;
+            }
+            
+            if (validFiles.length === 0 && ignoredFiles.length > 0) {
+                fileListHTML += `<br><strong style="color: #d9534f;">No valid markdown files selected</strong>`;
+            }
+            
             fileListHTML += `</div>`;
             fileInfo.innerHTML = fileListHTML;
         }
