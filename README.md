@@ -62,14 +62,24 @@ python app.py
 
 ## Deployment Options
 
-### Render.com (Recommended for Students)
+### Deploy from GitHub to Render (Recommended) 🚀
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+
 1. Push your code to GitHub
 2. Connect your GitHub repo to Render
 3. Set environment variable: `SECRET_KEY` (generate with `python -c "import secrets; print(secrets.token_hex(32))"`)
-4. Deploy!
+4. Deploy automatically on every push!
+
+### GitHub Pages (Limited Demo)
+A basic client-side version is available for GitHub Pages:
+1. Enable GitHub Pages in Settings
+2. Visit: `https://yourusername.github.io/your-repo/index_static.html`
+3. Note: Limited functionality compared to full version
 
 ### Local Development
 - Run `python app.py` for local testing (runs on port 8080)
+
+See [GITHUB_DEPLOYMENT.md](GITHUB_DEPLOYMENT.md) for detailed deployment instructions
 
 ### Cloud Deployment Options
 - **Heroku**: Simple git-based deployment

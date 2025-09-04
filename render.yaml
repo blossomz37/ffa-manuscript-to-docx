@@ -1,7 +1,7 @@
 services:
   - type: web
     name: markdown-to-docx-converter
-    env: python
+    runtime: python
     buildCommand: pip install -r requirements.txt
     startCommand: python app.py
     envVars:
@@ -9,3 +9,4 @@ services:
         generateValue: true
       - key: PYTHON_VERSION
         value: 3.11.5
+    autoDeploy: true
